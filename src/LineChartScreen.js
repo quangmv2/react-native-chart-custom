@@ -28,10 +28,14 @@ const LineChartScreen = _ => {
 //   }
 
     return (
-      <View style={{ flex: 1, width: '100%' }}>
-        <View style={styles.container}>
+      <View style={styles.container}>
+        <View style={styles.labelX}>
+          <Text>Lít/</Text>
+          <Text>giây</Text>
+        </View>
+        <View style={styles.chart}>
           <LineChart
-            style={styles.chart}
+            style={styles.chartBody}
             data={data}
             chartDescription={{ text: "" }}
             legend={{
@@ -79,6 +83,9 @@ const LineChartScreen = _ => {
             // onSelect={this.handleSelect.bind(this)}
             // onChange={event => console.log(event.nativeEvent)}
           />
+          <View style={styles.labelY}>
+            <Text>Lít</Text>
+        </View>
         </View>
       </View>
     );
@@ -86,16 +93,65 @@ const LineChartScreen = _ => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    // height: 250,
+    height: 250,
     backgroundColor: "white",
-    padding: 20
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
   },
   chart: {
+    flex: 12,
+    // height: 250
+    backgroundColor: '#FFF',
+    padding: 0
+  },
+  chartBody: {
+    // flex: 1,
     height: 250
+  },
+  labelX: {
+    transform: [
+      {
+        rotate: "90deg"
+      }
+    ],
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    opacity: 0.5
+  },
+  labelY: {
+    justifyContent: "center",
+    alignItems: "center",
+    opacity: 0.5
   }
 });
 
 export default LineChartScreen;
+
+const config = {
+    mode: "CUBIC_BEZIER",
+    drawValues: false,
+    lineWidth: 2,
+    drawCircles: false,
+    circleColor: processColor(petrel),
+    drawCircleHole: false,
+    circleRadius: 5,
+    highlightColor: processColor("transparent"),
+    color: processColor('blue'),
+    drawFilled: false,
+    fillGradient: {
+      colors: [processColor(petrel), processColor(greenBlue)],
+      positions: [0, 0.5],
+      angle: 90,
+      orientation: "TOP_BOTTOM"
+    },
+    fillAlpha: 1000,
+    valueTextSize: 15
+}
 
 const data = {
     dataSets: [
@@ -128,24 +184,8 @@ const data = {
         ],
         label: "",
         config: {
-          mode: "CUBIC_BEZIER",
-          drawValues: false,
-          lineWidth: 2,
-          drawCircles: false,
-          circleColor: processColor(petrel),
-          drawCircleHole: false,
-          circleRadius: 5,
-          highlightColor: processColor("transparent"),
+          ...config,
           color: processColor('blue'),
-          drawFilled: false,
-          fillGradient: {
-            colors: [processColor(petrel), processColor(greenBlue)],
-            positions: [0, 0.5],
-            angle: 90,
-            orientation: "TOP_BOTTOM"
-          },
-          fillAlpha: 1000,
-          valueTextSize: 15
         }
       },
       {
@@ -173,28 +213,36 @@ const data = {
               {
                 y: 0,
                 x: 2.6,
+              },
+              {
+                y: 0,
+                x: 0.1,
+              },
+              {
+                y: -2,
+                x: 0.3,
+              },
+              {
+                y: -3,
+                x: 0.9,
+              },
+              {
+                y: -4,
+                x: 1.6,
+              },
+              {
+                y: -2.5,
+                x: 2.1,
+              },
+              {
+                y: 0,
+                x: 2.6,
               }
             ],
           label: "",
           config: {
-            mode: "CUBIC_BEZIER",
-            drawValues: false,
-            lineWidth: 2,
-            drawCircles: false,
-            circleColor: processColor(petrel),
-            drawCircleHole: false,
-            circleRadius: 5,
-            highlightColor: processColor("transparent"),
+            ...config,
             color: processColor('blue'),
-            drawFilled: false,
-            fillGradient: {
-              colors: [processColor(petrel), processColor(greenBlue)],
-              positions: [0, 0.5],
-              angle: 90,
-              orientation: "TOP_BOTTOM"
-            },
-            fillAlpha: 1000,
-            valueTextSize: 15
           }
         },
       {
@@ -226,24 +274,8 @@ const data = {
         ],
         label: "",
         config: {
-          mode: "CUBIC_BEZIER",
-          drawValues: false,
-          lineWidth: 2,
-          drawCircles: false,
-          circleColor: processColor(petrel),
-          drawCircleHole: false,
-          circleRadius: 5,
-          highlightColor: processColor("transparent"),
+          ...config,
           color: processColor('red'),
-          drawFilled: false,
-          fillGradient: {
-            colors: [processColor('red'), processColor('yellow')],
-            positions: [0, 0.5],
-            angle: 90,
-            orientation: "TOP_BOTTOM"
-          },
-          fillAlpha: 1000,
-          valueTextSize: 15
         }
       },
       {
@@ -275,24 +307,8 @@ const data = {
           ],
           label: "",
           config: {
-            mode: "CUBIC_BEZIER",
-            drawValues: false,
-            lineWidth: 2,
-            drawCircles: false,
-            circleColor: processColor(petrel),
-            drawCircleHole: false,
-            circleRadius: 5,
-            highlightColor: processColor("transparent"),
-            color: processColor('red'),
-            drawFilled: false,
-            fillGradient: {
-              colors: [processColor('red'), processColor('yellow')],
-              positions: [0, 0.5],
-              angle: 90,
-              orientation: "TOP_BOTTOM"
-            },
-            fillAlpha: 1000,
-            valueTextSize: 15
+           ...config,
+           color: processColor('red'),
           }
         }
     ]
