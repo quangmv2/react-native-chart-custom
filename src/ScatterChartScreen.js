@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -86,7 +86,7 @@ const ScatterChartScreen = (props) =>{
                     },
               }}
 
-              data={{dataSets: props.data}}
+              data={props.convertData?{dataSets: props.data.map(props.convertData)}:{dataSets: props.data}}
               autoScaleMinMaxEnabled={true}
               drawGridBackground={false}
               drawBorders={false}
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   }
 });
-export default ScatterChartScreen;
+export default memo(ScatterChartScreen);
 
 const config = {
   mode: "CUBIC_BEZIER",

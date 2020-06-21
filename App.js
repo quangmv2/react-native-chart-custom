@@ -28,7 +28,8 @@ let indexColor = 0;
 const stepX = 0.01;
 const stepY = 0.05;
 const loader = 500;
-let xx = 0;
+let xx = 0.2;
+let idInterval = 0;
 function getRandomArbitrary(min, max, t=0) {
   return t>1?-(Math.random() * (max - min) + min):Math.random() * (max - min) + min;
 }
@@ -40,9 +41,9 @@ const _randomYValues = (range, size) => {
 }
 
 var arrTemp;
-const template = () => { xx+=0.01; return ({
+const template = () => { xx-=getRandomArbitrary(0.01, 0.2); return ({
   values: [{
-    x: xx - getRandomArbitrary(0.1, 0.2), y: getRandomArbitrary(0.1, 0.5)
+    x: xx, y: getRandomArbitrary(0.1, 0.5)
   }],
   label: "",
   config: {
@@ -94,9 +95,13 @@ const App: () => React$Node = () => {
   }
 
   const start = () => {
-    setInterval(() => {
+    setStatus(true);
+    clearInterval(idInterval);
+    xx=0.2;
+    setData([template()]);
+    idInterval = setInterval(() => {
       createData();
-    }, 30);
+    }, 300);
   }
 
   const continueData = (statusDT) => {
@@ -107,6 +112,13 @@ const App: () => React$Node = () => {
     Alert.alert('Hello bi lua roi nha');
   }
 
+  const convertData = (obj) =>  {
+    let {values} = obj;
+    values = values.map(({x, y}) => ({x: x/y, y:x}));
+    const k = {...obj, values};
+    return k;
+  }
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={"#FFF"} />
@@ -114,7 +126,7 @@ const App: () => React$Node = () => {
         {/* <Text>Hello</Text> */}
         {/* <LineChartScreen /> */}
         <View style={styles.chart}>
-          <ScatterChartScreen data={data} titleX={"Lít"} titleY={"Lít/giây"}/>
+          <ScatterChartScreen data={[]} titleX={"Lít"} titleY={"Lít/giây"} convertData={convertData}/>
         </View>
         <View style={styles.chart}>
           <ScatterChartScreen data={data} titleX={"Giây"} titleY={"Lít"} />
@@ -123,7 +135,9 @@ const App: () => React$Node = () => {
           <TouchableOpacity style={styles.function} onPress={start}>
             <Text>Bắt đầu</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.function} onPress={status?()=>continueData(false):()=>continueData(true)}>
+          <TouchableOpacity style={styles.function} onPress={status?()=>{clearInterval(idInterval); setStatus(false); }:()=>{setStatus(true); idInterval = setInterval(() => {
+      createData();
+    }, 30);}}>
             <Text> {status?'Tạm dừng':'Tiếp tục'} </Text>
           </TouchableOpacity>
         </View>
