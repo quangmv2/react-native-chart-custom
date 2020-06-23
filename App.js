@@ -17,106 +17,129 @@ import {
   Text,
   Alert
 } from 'react-native';
-import LineChartScreen from './src/LineChartScreen';
+// import LineChartScreen from './src/LineChartScreen';
 import ScatterChartScreen from './src/ScatterChartScreen';
 import _ from 'lodash';
 
-const greenBlue = "rgb(26, 182, 151)";
+const stepX = 0.001;
+const stepY = 0.01;
 const petrel = "rgb(59, 145, 153)";
+function getRandomArbitrary(min, max) {
+  return (Math.random() * (max - min) + min);
+}
+
 const colors = ['blue', 'red', 'green', 'gray'];
 let indexColor = 0;
-const stepX = 0.01;
-const stepY = 0.05;
-const loader = 500;
-let xx = 0.2;
-let idInterval = 0;
-function getRandomArbitrary(min, max, t=0) {
-  return t>1?-(Math.random() * (max - min) + min):Math.random() * (max - min) + min;
-}
 
-const _randomYValues = (range, size) => {
-  return _.times(size, () => {
-    return {y: Math.random() * range, x: Math.random() * range}
-  });
-}
-
-var arrTemp;
-const template = () => { xx-=getRandomArbitrary(0.01, 0.2); return ({
-  values: [{
-    x: xx, y: getRandomArbitrary(0.1, 0.5)
-  }],
-  label: "",
-  config: {
-    ...config,
-    color: processColor(colors[indexColor]),
-  }
-})};
-
-var up = true;
+let up = 0;
+let point = 0;
 
 const App: () => React$Node = () => {
 
-  const [data, setData] = useState([
-    template()
-  ]);
-
+  const [data1, setData1] = useState(
+        {
+          values: [],
+          label: "",
+          config: {
+            ...config,
+            color: processColor(colors[indexColor]),
+          }
+        });
+  const [data2, setData2] = useState(
+    {
+      values: [],
+      label: "",
+      config: {
+        ...config,
+        color: processColor(colors[indexColor]),
+      }
+    }
+  );
   const [status, setStatus] = useState(false);
+  // const [point, setPoint] = useState(0);
 
-  const createData = () => {
-    setData(datas => {
-      let data = datas.slice();
-      let obj = data[data.length - 1];
-      let  values  = obj.values.slice();
-      let value = values[values.length - 1];
-      if (values.length > 1 && value.y <= 0){
-        up = true;
-        if (++indexColor>3) indexColor = 0;
-        data.push(template())
-        return data;
+
+  const createData = (datas) => {
+    let data = datas.values.slice();
+    let length = data.length;
+    let value = length>0?data[length - 1] : {x: 0, y: 0};
+
+    if (up===0) {
+      value = {
+        x: value.x + getRandomArbitrary(0.0005, 0.0008),
+        y: value.y + getRandomArbitrary(0.008, 0.01),
+      };
+      if (point >= 300) {
+          up++;
+          point =  0;
+      };
+      point++;
+      // console.log(length, up);
+    }
+
+    if (up===1) {
+      value = {
+        x: value.x + getRandomArbitrary(0.0001, 0.0009),
+        y: value.y - getRandomArbitrary(0.008, 0.01),
+      };
+      if (point >= 250) {
+        up++;
+        point =  0;
+      };
+      point++;
+      // console.log(length, up);
+    }
+
+    if (up===2) {
+      let k = 0;
+      value = {
+        x: value.x - getRandomArbitrary(0.0005, 0.0009),
+        y: value.y - getRandomArbitrary(0.0005, 0.0008),
+      };
+      if (point >= 200) {
+        up = 0;
+        k = 1;
+        point = 0;
+      };
+      point++;
+      if (k===1) {
+        value = {
+          x: value.x - getRandomArbitrary(0.005, 0.009),
+          y: getRandomArbitrary(0.001, 0.003),
+        };
+        indexColor = ++indexColor>3?0:indexColor; 
       }
-      if (value.y>2) up = false;
-      if (up) {
-        values.push({
-          x: value.x+stepX,
-          y: value.y+stepY,
-        });
-      } else {
-        values.push({
-          x: value.x+stepX,
-          y: value.y-stepY,
-        });
-      }
-      const k = {
-        ...obj, values: values.slice()
-      }
-      data.push(k);
-      return data;
-    })
+    }
+
+    
+    data.push(value);
+    return {
+      label: "",
+      config: {
+        ...datas.config,
+        color: processColor(colors[indexColor]),
+      },
+      values: data
+    };
+
   }
-
+  
   const start = () => {
-    setStatus(true);
-    clearInterval(idInterval);
-    xx=0.2;
-    setData([template()]);
-    idInterval = setInterval(() => {
-      createData();
-    }, 300);
+    setInterval(() => {
+      setData1(createData);
+    }, 30);
   }
+
+  // console.log(data1);
+
 
   const continueData = (statusDT) => {
-    setStatus(statusDT);
   }
 
   const logData = () => {
-    Alert.alert('Hello bi lua roi nha');
   }
 
   const convertData = (obj) =>  {
-    let {values} = obj;
-    values = values.map(({x, y}) => ({x: x/y, y:x}));
-    const k = {...obj, values};
-    return k;
   }
 
   return (
@@ -126,10 +149,10 @@ const App: () => React$Node = () => {
         {/* <Text>Hello</Text> */}
         {/* <LineChartScreen /> */}
         <View style={styles.chart}>
-          <ScatterChartScreen data={[]} titleX={"Lít"} titleY={"Lít/giây"} convertData={convertData}/>
+          <ScatterChartScreen dataChart={data2} titleX={"Lít"} titleY={"Lít/giây"}/>
         </View>
         <View style={styles.chart}>
-          <ScatterChartScreen data={data} titleX={"Giây"} titleY={"Lít"} />
+          <ScatterChartScreen dataChart={data1} titleX={"Giây"} titleY={"Lít"} />
         </View>
         <View style={styles.functions}>
           <TouchableOpacity style={styles.function} onPress={start}>
@@ -182,7 +205,7 @@ function delay(milliseconds) {
 
 const config = {
   mode: "CUBIC_BEZIER",
-  // scatterShape: 'CIRCLE',
+  scatterShape: 'CIRCLE',
   drawValues: false,
   lineWidth: 0.1,
   drawCircles: true,
@@ -192,12 +215,6 @@ const config = {
   highlightColor: processColor("transparent"),
   color: processColor('blue'),
   drawFilled: false,
-  fillGradient: {
-    colors: [processColor(petrel), processColor(greenBlue)],
-    positions: [0, 0.5],
-    angle: 90,
-    orientation: "TOP_BOTTOM"
-  },
   fillAlpha: 1000,
   valueTextSize: 0
 }

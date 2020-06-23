@@ -30,26 +30,6 @@ const OFFSET = TEXT_LENGTH / 2 - TEXT_HEIGHT / 2;
 var idInterval = 0;
 const ScatterChartScreen = (props) =>{
 
-  // const [dataChart, setDataChart] = useState({
-  //   dataSets: [
-  //     {
-  //       values: _randomYValues(3, 100),
-  //       label: "",
-  //       config: {
-  //         ...config,
-  //         color: processColor('blue'),
-  //       }
-  //     },
-  //     {
-  //       values: _randomYValues(3, 100),
-  //       label: "",
-  //       config: {
-  //         ...config,
-  //         color: processColor('red'),
-  //       }
-  //     }
-  //   ]
-  // });
     return (
      
       <View style={styles.container}>
@@ -86,7 +66,7 @@ const ScatterChartScreen = (props) =>{
                     },
               }}
 
-              data={props.convertData?{dataSets: props.data.map(props.convertData)}:{dataSets: props.data}}
+              data={{dataSets: [props.dataChart]}}
               autoScaleMinMaxEnabled={true}
               drawGridBackground={false}
               drawBorders={false}
