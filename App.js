@@ -33,6 +33,8 @@ let indexColor = 0;
 
 let up = 0;
 let point = 0;
+let valuee = { x:0, y: 0 };
+let idInterval = 0;
 
 const App: () => React$Node = () => {
 
@@ -110,9 +112,8 @@ const App: () => React$Node = () => {
         indexColor = ++indexColor>3?0:indexColor; 
       }
     }
-
-    
     data.push(value);
+    valuee = value;
     return {
       label: "",
       config: {
@@ -125,8 +126,35 @@ const App: () => React$Node = () => {
   }
   
   const start = () => {
-    setInterval(() => {
+    setStatus(true);
+    setData1(
+      {
+        values: [],
+        label: "",
+        config: {
+          ...config,
+          color: processColor(colors[indexColor]),
+        }
+      }
+    )
+    idInterval = setInterval(() => {
       setData1(createData);
+      // setData2(dt => {
+      //   let k = [...dt.values];
+      //   k.push({
+      //     x: valuee.x/valuee.y,
+      //     y: valuee.x
+      //   });
+      //   // return {
+      //   //   ...dt,
+      //   //   values: k
+      //   // };
+      //   console.log(k);
+      //   return {
+      //     ...dt,
+      //     values: [...k]
+      //   };
+      // })
     }, 30);
   }
 
@@ -158,9 +186,7 @@ const App: () => React$Node = () => {
           <TouchableOpacity style={styles.function} onPress={start}>
             <Text>Bắt đầu</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.function} onPress={status?()=>{clearInterval(idInterval); setStatus(false); }:()=>{setStatus(true); idInterval = setInterval(() => {
-      createData();
-    }, 30);}}>
+          <TouchableOpacity style={styles.function} onPress={status?()=>{clearInterval(idInterval); setStatus(false); }:()=>{setStatus(true); idInterval = setInterval(() => setData1(createData), 30);}}>
             <Text> {status?'Tạm dừng':'Tiếp tục'} </Text>
           </TouchableOpacity>
         </View>
